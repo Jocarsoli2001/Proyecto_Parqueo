@@ -29,7 +29,7 @@
 
 //-------------------------------- Varibles de programa --------------------------------
 int i = 0;
-uint8_t Num_parqueos = 0b0000;
+int Num_parqueos = 0b0000;
 int P1 = 0;
 int P2 = 0;
 int P3 = 0;
@@ -55,52 +55,83 @@ int main(void)
     // ---------------------------------------------------------------------------------
 
 	while(1){
-	    // Detección de parqueos
-	    P1 = GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2);
-	    P2 = GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_3);
-	    P3 = GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_2);
-	    P4 = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2);
 
-	    // Condiciones para generar al momento de detectar un "carro"
+	    // -----------------------------------------------------------------------------
+        // Manejo de número de parqueos según detección de sensor
+        // -----------------------------------------------------------------------------
 
 	    // Parqueo 1:
-	    if(GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2) == 0){
-            Num_parqueos = Num_parqueos ^ 0b0001;
-	        GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b010);
+	    if(GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2) > 0){
+	        Num_parqueos = (Num_parqueos | 0b0001);
+
 	    }
-	    else{
-	        Num_parqueos = Num_parqueos | 0b0001;
-	        GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b001);
+	    else if(GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2) == 0 && (Num_parqueos & 0b0001) == 0b0001){
+	        Num_parqueos = (Num_parqueos ^ 0b0001);
 	    }
 
 	    // Parqueo 2:
-	    if(GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_3) == 0){
-	        Num_parqueos = Num_parqueos ^ 0b0010;
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1 | GPIO_PIN_2, 0b100);
+	    if(GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_3) > 0){
+	        Num_parqueos = (Num_parqueos | 0b0010);
+
         }
-        else{
-            Num_parqueos = Num_parqueos | 0b0010;
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1 | GPIO_PIN_2, 0b010);
+        else if(GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_3) == 0 && (Num_parqueos & 0b0010) == 0b0010){
+            Num_parqueos = (Num_parqueos ^ 0b0010);
+
         }
 
 	    // Parqueo 3:
-        if(GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_2) == 0){
-            Num_parqueos = Num_parqueos | 0b0100;                                                   // Se realiza un OR con 0b1000 para que por medio de ese bit, se indique que ese es el parqueo prendido
-            GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b010);
+        if(GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_2) > 0){
+            Num_parqueos = (Num_parqueos | 0b0100);
         }
-        else{
-            Num_parqueos = Num_parqueos ^ 0b0100;
-            GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b001);
+        else if(GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_2) == 0 && (Num_parqueos & 0b0100) == 0b0100){
+            Num_parqueos = (Num_parqueos ^ 0b0100);                                                  // Se realiza un XOR con 0b1000 para que por medio de ese bit, se indique que ese es el parqueo prendido
+
         }
 
         // Parqueo 4:
-        if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == 0){
-            Num_parqueos = Num_parqueos | 0b1000;                                                   // Se realiza un OR con 0b1000 para que por medio de ese bit, se indique que ese es el parqueo prendido
-            GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4, 0b1000);
+        if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) > 0){
+            Num_parqueos = (Num_parqueos | 0b1000);
+
+        }
+        else if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == 0 && (Num_parqueos & 0b1000) == 0b1000){
+            Num_parqueos = (Num_parqueos ^ 0b1000);                                                  // Se realiza un XOR con 0b1000 para que por medio de ese bit, se indique que ese es el parqueo prendido
+
+        }
+
+
+        // -----------------------------------------------------------------------------
+        // Manejo de las luces que se prenden en el parqueo
+        // -----------------------------------------------------------------------------
+        // Parqueo 1
+        if(GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2) > 0){
+            GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b001);
         }
         else{
-            Num_parqueos = Num_parqueos ^ 0b1000;
+            GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b010);
+        }
+
+        // Parqueo 2
+        if(GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_3) > 0){
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1 | GPIO_PIN_2, 0b010);
+        }
+        else{
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1 | GPIO_PIN_2, 0b100);
+        }
+
+        // Parqueo 3
+        if(GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_2) > 0){
+            GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b001);
+        }
+        else{
+            GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_0 | GPIO_PIN_1, 0b010);
+        }
+
+        // Parqueo 4
+        if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) > 0){
             GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4, 0b10000);
+        }
+        else{
+            GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4, 0b1000);
         }
 	}
 }
@@ -188,7 +219,8 @@ void UART3IntHandler(void){
 
     UARTIntClear(UART3_BASE, UART_INT_RX| UART_INT_RT);                                             // Reiniciar la bandera de interrupción de comunicación UART
 
-    UARTCharPutNonBlocking(UART3_BASE, Num_parqueos);                                               // Enviar los datos de parqueos hacia ESP32
+    UARTCharPutNonBlocking(UART3_BASE, Num_parqueos);                                                         // Enviar los datos de parqueos hacia ESP32
+
 
 
 }
