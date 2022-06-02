@@ -219,7 +219,7 @@ void UART3IntHandler(void){
 
     UARTIntClear(UART3_BASE, UART_INT_RX| UART_INT_RT);                                             // Reiniciar la bandera de interrupción de comunicación UART
 
-    UARTCharPutNonBlocking(UART3_BASE, Num_parqueos);                                                         // Enviar los datos de parqueos hacia ESP32
+    UARTCharPutNonBlocking(UART3_BASE, Num_parqueos);                                               // Enviar los datos de parqueos hacia ESP32
 
 
 
