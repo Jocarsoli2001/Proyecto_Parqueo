@@ -10,7 +10,6 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./WebServer.obj" \
 "./main.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
 "C:/ti/TivaWare_C_Series-2.1.4.178/driverlib/ccs/Debug/driverlib.lib" \
@@ -157,8 +156,7 @@ Proyecto\ -\ Parqueo.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "WebServer.obj" "main.obj" "tm4c123gh6pm_startup_ccs.obj" 
-	-$(RM) "WebServer.d" 
+	-$(RM) "main.obj" "tm4c123gh6pm_startup_ccs.obj" 
 	-$(RM) "main.d" "tm4c123gh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
